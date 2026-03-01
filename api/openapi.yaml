@@ -1,70 +1,40 @@
 openapi: 3.0.3
 info:
   title: TreasureHunt.Tectrix2026 API
-  version: 1.1.0
-  description: Runnable API contract aligned with backend implementation.
+  version: 1.0.0
+  description: API contract for participant and admin workflows.
 servers:
-  - url: http://localhost:4000
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: token
-paths:
-  /health:
-    get:
-      summary: Health check
-      responses:
-        '200': { description: OK }
+  - url: https://api.treasurehunt.example.com
 
+paths:
   /auth/participant/register:
     post:
-      summary: Register participant with password and create session
+      summary: Register participant
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required: [fullName, department, collegeEmail, collegeRoll, year, password]
-              properties:
-                fullName: { type: string }
-                department: { type: string }
-                collegeEmail: { type: string }
-                collegeRoll: { type: string }
-                year: { type: string }
-                password: { type: string, minLength: 8 }
+              $ref: '#/components/schemas/RegisterParticipantRequest'
       responses:
-        '201': { description: Registered }
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantSession'
+        '409':
+          description: Duplicate email or roll
 
   /auth/participant/login:
     post:
-      summary: Participant login with email/roll + password
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [password]
-              properties:
-                collegeEmail: { type: string }
-                collegeRoll: { type: string }
-                password: { type: string, minLength: 8 }
+      summary: Passwordless participant login (email OTP/magic link)
       responses:
-        '200': { description: Logged in }
-
-  /auth/participant/logout:
-    post:
-      security: [{ bearerAuth: [] }]
-      summary: Participant logout
-      responses:
-        '200': { description: Logged out }
+        '200':
+          description: Login initiated/completed
 
   /groups:
     post:
-      security: [{ bearerAuth: [] }]
       summary: Create group
       requestBody:
         required: true
@@ -74,13 +44,14 @@ paths:
               type: object
               required: [groupName]
               properties:
-                groupName: { type: string }
+                groupName:
+                  type: string
       responses:
-        '201': { description: Group created }
+        '201':
+          description: Group created
 
   /groups/{groupId}/invitations:
     post:
-      security: [{ bearerAuth: [] }]
       summary: Invite member by email or roll
       parameters:
         - in: path
@@ -94,22 +65,17 @@ paths:
             schema:
               type: object
               properties:
-                collegeEmail: { type: string }
-                collegeRoll: { type: string }
+                email:
+                  type: string
+                  format: email
+                roll:
+                  type: string
       responses:
         '201': { description: Invitation created }
 
-  /invitations:
-    get:
-      security: [{ bearerAuth: [] }]
-      summary: List pending invitations
-      responses:
-        '200': { description: Pending invites }
-
   /invitations/{invitationId}/accept:
     post:
-      security: [{ bearerAuth: [] }]
-      summary: Accept invitation
+      summary: Accept group invite
       parameters:
         - in: path
           name: invitationId
@@ -118,22 +84,9 @@ paths:
       responses:
         '200': { description: Joined group }
 
-  /invitations/{invitationId}/reject:
-    post:
-      security: [{ bearerAuth: [] }]
-      summary: Reject invitation
-      parameters:
-        - in: path
-          name: invitationId
-          required: true
-          schema: { type: integer }
-      responses:
-        '200': { description: Rejected }
-
   /qr/scan:
     post:
-      security: [{ bearerAuth: [] }]
-      summary: Resolve scanned token
+      summary: Resolve scanned QR token to question
       requestBody:
         required: true
         content:
@@ -142,97 +95,47 @@ paths:
               type: object
               required: [token]
               properties:
-                token: { type: string }
+                token:
+                  type: string
       responses:
-        '200': { description: QR details }
-        '429': { description: Too many requests }
+        '200':
+          description: QR details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QrQuestion'
 
   /submissions:
     post:
-      security: [{ bearerAuth: [] }]
-      summary: Submit QR answer
+      summary: Submit answer for a QR
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required: [qrNumber, answer, explanation]
-              properties:
-                qrNumber: { type: string }
-                answer: { type: string }
-                explanation: { type: string }
+              $ref: '#/components/schemas/SubmitAnswerRequest'
       responses:
-        '201': { description: Submission created }
-        '200': { description: Final QR success }
-        '429': { description: Too many requests }
+        '201':
+          description: Submission recorded
+        '409':
+          description: Team already submitted this QR
 
   /admin/login:
     post:
       summary: Admin login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [email, password]
-              properties:
-                email: { type: string }
-                password: { type: string, minLength: 8 }
       responses:
-        '200': { description: Logged in }
-
-  /admin/logout:
-    post:
-      security: [{ bearerAuth: [] }]
-      summary: Admin logout
-      responses:
-        '200': { description: Logged out }
+        '200': { description: Authenticated }
 
   /admin/dashboard:
     get:
-      security: [{ bearerAuth: [] }]
-      summary: Dashboard stats
+      summary: Dashboard metrics
       responses:
-        '200': { description: Stats }
-
-  /admin/audit-logs:
-    get:
-      security: [{ bearerAuth: [] }]
-      summary: Recent admin audit logs
-      responses:
-        '200': { description: Logs }
-
-  /events:
-    get:
-      summary: SSE dashboard stream (use bearer token or `?token=`)
-      responses:
-        '200': { description: text/event-stream }
-
-  /admin/game/state:
-    patch:
-      security: [{ bearerAuth: [] }]
-      summary: Set game status and submission closure
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  enum: [running, paused, closed]
-                closeSubmissions:
-                  type: boolean
-      responses:
-        '200': { description: Updated }
+        '200':
+          description: Live stats
 
   /admin/game/final-qr:
     patch:
-      security: [{ bearerAuth: [] }]
-      summary: Mark one QR as final
+      summary: Mark final QR
       requestBody:
         required: true
         content:
@@ -241,54 +144,33 @@ paths:
               type: object
               required: [qrNumber]
               properties:
-                qrNumber: { type: string }
+                qrNumber:
+                  type: string
       responses:
         '200': { description: Updated }
 
-  /admin/teams/{groupId}/disqualify:
+  /admin/game/state:
     patch:
-      security: [{ bearerAuth: [] }]
-      summary: Disqualify a team
-      parameters:
-        - in: path
-          name: groupId
-          required: true
-          schema: { type: integer }
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                reason: { type: string }
-      responses:
-        '200': { description: Disqualified }
-
-  /admin/qr/{qrNumber}:
-    patch:
-      security: [{ bearerAuth: [] }]
-      summary: Edit QR question/active status
-      parameters:
-        - in: path
-          name: qrNumber
-          required: true
-          schema: { type: string }
+      summary: Pause/resume/close game
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [status]
               properties:
-                question: { type: string }
-                isActive: { type: boolean }
+                status:
+                  type: string
+                  enum: [running, paused, closed]
+                closeSubmissions:
+                  type: boolean
       responses:
-        '200': { description: Updated }
+        '200': { description: State updated }
 
   /admin/broadcast:
     post:
-      security: [{ bearerAuth: [] }]
-      summary: Queue broadcast message
+      summary: Send emergency broadcast
       requestBody:
         required: true
         content:
@@ -297,6 +179,60 @@ paths:
               type: object
               required: [message]
               properties:
-                message: { type: string }
+                message:
+                  type: string
+                channel:
+                  type: string
+                  enum: [in_app, sms]
       responses:
         '202': { description: Queued }
+
+components:
+  schemas:
+    RegisterParticipantRequest:
+      type: object
+      required:
+        - fullName
+        - department
+        - collegeEmail
+        - collegeRoll
+        - year
+      properties:
+        fullName: { type: string }
+        department:
+          type: string
+          enum: [IT, CSE, ECE, EE, AIML, BCA, MCA, MTech]
+        collegeEmail:
+          type: string
+          format: email
+        collegeRoll:
+          type: string
+        year:
+          type: string
+          enum: [1st, 2nd, 3rd, 4th]
+
+    ParticipantSession:
+      type: object
+      properties:
+        participantId: { type: integer }
+        participantCode: { type: string }
+        sessionToken: { type: string }
+
+    QrQuestion:
+      type: object
+      required: [qrNumber, question]
+      properties:
+        qrNumber: { type: string }
+        question: { type: string }
+        isFinal: { type: boolean }
+
+    SubmitAnswerRequest:
+      type: object
+      required:
+        - qrNumber
+        - answer
+        - explanation
+      properties:
+        qrNumber: { type: string }
+        answer: { type: string, minLength: 1 }
+        explanation: { type: string, minLength: 1 }

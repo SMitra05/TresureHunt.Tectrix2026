@@ -6,8 +6,6 @@ CREATE TABLE IF NOT EXISTS participants (
   college_email TEXT NOT NULL UNIQUE,
   college_roll TEXT NOT NULL UNIQUE,
   study_year TEXT NOT NULL,
-  password_hash TEXT,
-  password_salt TEXT,
   status TEXT NOT NULL DEFAULT 'active',
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -17,8 +15,6 @@ CREATE TABLE IF NOT EXISTS groups (
   group_name TEXT NOT NULL UNIQUE,
   leader_participant_id INTEGER NOT NULL,
   status TEXT NOT NULL DEFAULT 'forming',
-  disqualified_reason TEXT,
-  disqualified_at TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (leader_participant_id) REFERENCES participants(id)
 );
@@ -78,8 +74,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   full_name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
-  password_hash TEXT,
-  password_salt TEXT
+  password TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS game_settings (
@@ -93,7 +88,7 @@ CREATE TABLE IF NOT EXISTS game_settings (
 );
 
 INSERT OR IGNORE INTO game_settings(id,status,close_submissions) VALUES (1,'running',0);
-INSERT OR IGNORE INTO admin_users(id,full_name,email,password_hash,password_salt) VALUES (1,'Admin','admin@tectrix.edu','cf575e06a147f9b0d2759e7a96f65da3eba81e7044bb2495b903510f525c72e7','tectrix_admin_salt_v1');
+INSERT OR IGNORE INTO admin_users(id,full_name,email,password) VALUES (1,'Admin','admin@tectrix.edu','admin123');
 INSERT OR IGNORE INTO qr_codes(qr_number,token,question_text,is_final,is_active) VALUES
 ('QR1','token-qr-1','Clue at library gate?',0,1),
 ('QR2','token-qr-2','Find the red building name?',0,1),
