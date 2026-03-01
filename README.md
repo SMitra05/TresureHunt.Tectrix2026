@@ -1,27 +1,42 @@
-# TreasureHunt.Tectrix2026 — Web Platform Blueprint
+# TreasureHunt.Tectrix2026 — Runnable Project
 
-This repository now contains a production-ready technical blueprint for implementing the full Treasure Hunt system described in the requirements:
+This repository now contains an actual runnable full-stack setup:
 
-- Participant registration (email + roll uniqueness)
-- Group formation with invitations and acceptance flow
-- QR scanning and one-submission-per-team-per-QR validation
-- Final QR winner logic with prerequisite completion checks
-- Admin dashboard, game controls, and live monitoring
-- Persistence across logout/login
-- Responsive-first web architecture
+- `frontend/`: static web app (HTML/CSS/JS)
+- `backend/`: Python API server (no external dependencies)
+- `backend/migrations/`: SQL migration files applied to SQLite
 
-## Repository structure
+## Run locally
 
-- `docs/architecture.md` — end-to-end system design and workflows
-- `db/schema.sql` — relational database schema with constraints and indexes
-- `api/openapi.yaml` — API contract (participant + admin endpoints)
+```bash
+make migrate
+make backend
+# open another terminal
+make frontend
+```
 
-## Next implementation step
+- Frontend: http://localhost:5173
+- Backend: http://localhost:4000
+- Health endpoint: `GET /health`
 
-Use this blueprint to generate and implement:
+## Implemented flows
 
-1. Backend service (Node/Express, Django, or FastAPI)
-2. Frontend app (React/Vue/Next)
-3. Realtime channel (WebSocket/SSE)
-4. Auth/session and deployment configuration
+- Participant registration with unique email + roll
+- Group creation with one-active-group-per-participant rule
+- QR scan by token
+- Mandatory answer/explanation submissions
+- One submit per team per QR
+- Final QR requires prior submission of non-final QR set
+- Admin login and dashboard stats
 
+## Seeded data
+
+Migration seeds:
+- Admin credentials: `admin@tectrix.edu` / `admin123`
+- QR tokens: `token-qr-1`, `token-qr-2`, `token-qr-3`
+
+## Project docs
+
+- API contract: `api/openapi.yaml`
+- Data schema reference: `db/schema.sql`
+- Architecture notes: `docs/architecture.md`

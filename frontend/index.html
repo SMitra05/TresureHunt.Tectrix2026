@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treasure Hunt</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>TreasureHunt.Tectrix2026</h1>
+    <p class="muted">Runnable frontend (no build step)</p>
+
+    <section class="card">
+      <h2>Register</h2>
+      <input id="fullName" placeholder="Full Name" />
+      <input id="department" placeholder="Department" value="CSE" />
+      <input id="collegeEmail" placeholder="College Email" />
+      <input id="collegeRoll" placeholder="College Roll" />
+      <input id="year" placeholder="Year (1st-4th)" value="1st" />
+      <button id="registerBtn">Register</button>
+    </section>
+
+    <section class="card">
+      <h2>Create Group</h2>
+      <input id="groupName" placeholder="Group Name" />
+      <button id="groupBtn">Create Group</button>
+    </section>
+
+    <section class="card">
+      <h2>Scan QR + Submit</h2>
+      <input id="token" value="token-qr-1" placeholder="QR token" />
+      <button id="scanBtn">Scan</button>
+      <div id="qrArea" class="hidden">
+        <p id="qrText"></p>
+        <input id="answer" placeholder="Answer" />
+        <textarea id="explanation" placeholder="Why you think so"></textarea>
+        <button id="submitBtn">Submit</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <strong>Status:</strong> <span id="status">Ready</span><br />
+      <strong>Participant ID:</strong> <span id="pid">-</span>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
