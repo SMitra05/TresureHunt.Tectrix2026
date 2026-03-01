@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS participant_sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  participant_id INTEGER NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at TEXT NOT NULL,
+  FOREIGN KEY (participant_id) REFERENCES participants(id)
+);
+
+CREATE TABLE IF NOT EXISTS admin_sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  admin_id INTEGER NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at TEXT NOT NULL,
+  FOREIGN KEY (admin_id) REFERENCES admin_users(id)
+);
