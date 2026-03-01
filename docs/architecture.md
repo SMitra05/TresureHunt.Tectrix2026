@@ -11,9 +11,9 @@ Users -> Responsive Frontend -> Backend API -> DB + File Storage -> QR/Game Engi
 ## 2) Core Modules
 
 - **Participant Auth & Registration**
-  - Password-based login using hashed credentials (PBKDF2)
+  - Passwordless login via college email OTP/magic-link (recommended)
   - Registration enforces unique `(college_email, college_roll)`
-  - Bearer session tokens with expiry store authenticated participant/admin context
+  - Session cookie/JWT stores authenticated participant context
 
 - **Group Management**
   - Group creation by registered participant only

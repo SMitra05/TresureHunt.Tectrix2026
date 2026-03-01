@@ -3,8 +3,7 @@ CREATE TABLE IF NOT EXISTS participant_sessions (
   participant_id INTEGER NOT NULL,
   token TEXT NOT NULL UNIQUE,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  expires_at TEXT NOT NULL,
-  FOREIGN KEY (participant_id) REFERENCES participants(id)
+  FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS admin_sessions (
@@ -12,6 +11,5 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
   admin_id INTEGER NOT NULL,
   token TEXT NOT NULL UNIQUE,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  expires_at TEXT NOT NULL,
-  FOREIGN KEY (admin_id) REFERENCES admin_users(id)
+  FOREIGN KEY (admin_id) REFERENCES admin_users(id) ON DELETE CASCADE
 );

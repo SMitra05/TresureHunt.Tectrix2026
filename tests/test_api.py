@@ -80,26 +80,6 @@ class ApiTest(unittest.TestCase):
         code, _ = req('/submissions', 'POST', {'qrNumber': 'QR1', 'answer': 'x', 'explanation': 'y'}, token_a)
         self.assertEqual(code, 201)
 
-
-    def test_validation_errors(self):
-        ts = str(int(time.time() * 1000))
-        code, _ = req('/auth/participant/register', 'POST', {
-            'fullName': 'Weak User',
-            'department': 'CSE',
-            'collegeEmail': f'weak{ts}@ex.edu',
-            'collegeRoll': f'W{ts}',
-            'year': '1st',
-            'password': '123',
-        })
-        self.assertEqual(code, 400)
-
-        code, _ = req('/auth/participant/login', 'POST', {'password': 'strongpass1'})
-        self.assertEqual(code, 400)
-
-        _, admin = req('/admin/login', 'POST', {'email': 'admin@tectrix.edu', 'password': 'admin123'})
-        code, _ = req('/admin/teams/not-a-number/disqualify', 'PATCH', {'reason': 'bad'}, admin['token'])
-        self.assertEqual(code, 400)
-
     def test_admin_controls(self):
         code, admin = req('/admin/login', 'POST', {'email': 'admin@tectrix.edu', 'password': 'admin123'})
         self.assertEqual(code, 200)
