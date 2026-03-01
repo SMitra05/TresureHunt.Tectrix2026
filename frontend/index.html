@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treasure Hunt</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>TreasureHunt.Tectrix2026</h1>
+    <p class="muted">Secure auth + camera QR scan + realtime admin events</p>
+
+    <section class="card">
+      <h2>Participant Auth</h2>
+      <input id="collegeEmail" placeholder="College Email" />
+      <input id="collegeRoll" placeholder="College Roll" />
+      <input id="participantPassword" type="password" placeholder="Password" />
+      <button id="loginBtn">Login</button>
+      <button id="logoutBtn">Logout</button>
+    </section>
+
+    <section class="card">
+      <h2>Register</h2>
+      <input id="fullName" placeholder="Full Name" />
+      <input id="department" placeholder="Department" value="CSE" />
+      <input id="year" placeholder="Year (1st-4th)" value="1st" />
+      <button id="registerBtn">Register + Login</button>
+    </section>
+
+    <section class="card">
+      <h2>Create Group + Invite</h2>
+      <input id="groupName" placeholder="Group Name" />
+      <button id="groupBtn">Create Group</button>
+      <input id="inviteEmail" placeholder="Invite by email" />
+      <button id="inviteBtn">Send Invite (leader only)</button>
+      <input id="inviteId" placeholder="Invitation ID to accept/reject" />
+      <button id="acceptInviteBtn">Accept Invite</button>
+      <button id="rejectInviteBtn">Reject Invite</button>
+      <button id="listInvitesBtn">List My Pending Invites</button>
+      <pre id="invitesOut"></pre>
+    </section>
+
+    <section class="card">
+      <h2>Scan QR + Submit</h2>
+      <p class="muted">Use camera first, fallback to manual token.</p>
+      <button id="startScanBtn">Start Camera Scan</button>
+      <video id="qrVideo" class="hidden" autoplay playsinline></video>
+      <input id="token" value="token-qr-1" placeholder="Manual QR token" />
+      <button id="scanBtn">Submit Token</button>
+      <div id="qrArea" class="hidden">
+        <p id="qrText"></p>
+        <input id="answer" placeholder="Answer" />
+        <textarea id="explanation" placeholder="Why you think so"></textarea>
+        <button id="submitBtn">Submit</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Admin Controls</h2>
+      <input id="adminEmail" value="admin@tectrix.edu" placeholder="Admin Email" />
+      <input id="adminPassword" type="password" value="admin123" placeholder="Admin Password" />
+      <button id="adminLoginBtn">Admin Login</button>
+      <button id="adminDashboardBtn">Load Dashboard</button>
+      <button id="eventsBtn">Start Realtime Events</button>
+      <input id="gameStatus" placeholder="running/paused/closed" value="paused" />
+      <button id="gameStateBtn">Update Game State</button>
+      <input id="finalQr" placeholder="Final QR number (e.g., QR3)" value="QR3" />
+      <button id="finalQrBtn">Set Final QR</button>
+      <input id="disqualifyGroupId" placeholder="Group ID to disqualify" />
+      <input id="disqualifyReason" placeholder="Reason" value="rule violation" />
+      <button id="disqualifyBtn">Disqualify Team</button>
+      <input id="editQrNumber" placeholder="QR number to edit" value="QR2" />
+      <input id="editQrQuestion" placeholder="New question text" />
+      <label><input id="editQrActive" type="checkbox" checked /> Active</label>
+      <button id="editQrBtn">Edit QR</button>
+      <input id="broadcast" placeholder="Broadcast message" />
+      <button id="broadcastBtn">Broadcast</button>
+      <pre id="adminOut"></pre>
+    </section>
+
+    <section class="card">
+      <strong>Status:</strong> <span id="status">Ready</span><br />
+      <strong>Participant ID:</strong> <span id="pid">-</span>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
